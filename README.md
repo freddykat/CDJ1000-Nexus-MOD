@@ -44,7 +44,7 @@ Run the Application:
 
 bash
 Copy code
-python my_dj_app.py
+python my_nexus_app.py
 Interact:
 
 Load music tracks, customize colors, and explore waveform features.
