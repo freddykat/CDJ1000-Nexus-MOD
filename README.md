@@ -51,7 +51,7 @@ Load music tracks, customize colors, and explore waveform features.
 Utilize MIDI controllers for real-time interaction.
 
 
-![skin_preview]([https://github.com/timewasternl/Pioneered/blob/master/skin_preview.png?raw=true](https://github.com/freddykat/CDJ1000-Nexus-MOD/blob/main/images.jpg))
+![skin_preview]([https://github.com/timewasternl/Pioneered/blob/master/skin_preview.png?raw=true](https://github.com/freddykat/CDJ1000-Nexus-MOD/blob/main/images.jpg?raw=true)
 
 ## Features
 * Tabbed view: Main Menu
