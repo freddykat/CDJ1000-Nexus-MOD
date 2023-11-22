@@ -5,22 +5,22 @@ Pioneer inspired theme for smaller screen resolutions. It has been designed to '
 
 This project is being developed using ChatGPT as im not a poeficient coder/programmer so bear in mind that the code may seam weird for a professional programmer.
 
-Overview
 This repository contains the source code for "My Nexus App," a Python application built using the PyQt5 framework. The application serves as a digital DJ tool with MIDI integration, waveform visualization, music track management, and extended functionalities.
 
 Features
-MIDI Integration
+** MIDI Integration
 The application leverages the mido library to handle MIDI input and output. The MidiThread class manages MIDI ports, allowing communication with external MIDI devices. MIDI messages are received in real-time, enabling seamless integration with MIDI controllers.
 
-Waveform Visualization
+** Waveform Visualization
 The ExtendedWaveformFrame class provides an extended waveform display with various features:
 
-Fixed Needle: Represents a specific position within the waveform.
-Loop Markers: Display customizable loop start and end points.
-Slip Function Needle: Indicates a slip function position.
-Zoom In/Out: Allows users to zoom in and out of the waveform for detailed analysis.
-Music Track Management
-The MyDJApp class serves as the main application window and includes features such as:
+** Fixed Needle: Represents a specific position within the waveform.
+** Loop Markers: Display customizable loop start and end points.
+** Slip Function Needle: Indicates a slip function position.
+** Zoom In/Out: Allows users to zoom in and out of the waveform for detailed analysis.
+** Music Track Management
+
+The MyNexusApp class serves as the main application window and includes features such as:
 
 Music Loading: Displays information about the currently playing track, including title, artist, album, and artwork.
 Music List: Populates a list of tracks, allowing users to select and load them into the player.
@@ -62,15 +62,3 @@ Utilize MIDI controllers for real-time interaction.
 * Beatjump/Loop size on screen button (popup as factory Pioneer product)
 * MIDI handling
 * Barely any resources = Rpi4b or Rpi5!
-
-## Install
-Drop the `Pioneered` folder in `<MIXXX_FOLDER>/skins` and select it from `Preferences > Interface`.
-
-Alternatively, you can use the `install.linux.sh` script to automatically install the skin to `.mixxx/skins`.
-
-## Contributors
-* [timewasternl](https://github.com/timewasternl)
-* [GorgiAstro](https://github.com/GorgiAstro)
-* [BvOBart](https://github.com/bvobart)
-* [bencejuhaasz](https://github.com/bencejuhaasz)
-
