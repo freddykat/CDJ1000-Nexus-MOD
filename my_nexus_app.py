@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QFrame, QSlider, QMenuBar, QMenu, QAction, QListWidget, QListWidgetItem, QPushButton, QMenu, QSizePolicy, QColorDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QFrame, QSlider, QPushButton, QLineEdit, QHBoxLayout, QListWidget, QListWidgetItem, QMenu, QAction, QColorDialog
 from PyQt5.QtGui import QPainter, QColor, QPixmap
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
 import mido
@@ -30,32 +30,38 @@ class ExtendedWaveformFrame(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setStyleSheet("background-color: #777;")
-        self.fixed_needle_position = 0.2  # Value between 0 and 1
-        self.loop_markers = [(0.3, 0.4), (0.6, 0.7)]  # List of tuples (start, end) between 0 and 1
-        self.slip_function_needle_position = 0.8  # Value between 0 and 1
-        self._needle_color = Qt.red  # Default needle color
-        self._marker_color = Qt.green  # Default marker color
+        self.fixed_needle_position = 0.2
+        self.loop_markers = [(0.3, 0.4), (0.6, 0.7)]
+        self.slip_function_needle_position = 0.8
+        self._needle_color = Qt.red
+        self._marker_color = Qt.green
 
-        # Add Zoom Buttons
-        self.zoom_in_button = QPushButton('+', self)
-        self.zoom_in_button.clicked.connect(self.zoomIn)
+        self.keyboard_line_edit = QLineEdit(self)
+        self.keyboard_line_edit.setGeometry(10, 10, 400, 40)
+        self.keyboard_line_edit.hide()
+        self.keyboard_line_edit.setMaxLength(1)
+        self.keyboard_line_edit.setReadOnly(True)
 
-        self.zoom_out_button = QPushButton('-', self)
-        self.zoom_out_button.clicked.connect(self.zoomOut)
+        self.keyboard_layout = QHBoxLayout()
+        for char in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            button = QPushButton(char, self)
+            button.clicked.connect(lambda _, ch=char: self.keyboardButtonClicked(ch))
+            self.keyboard_layout.addWidget(button)
+
+        self.keyboard_buttons_widget = QWidget(self)
+        self.keyboard_buttons_widget.setLayout(self.keyboard_layout)
+        self.keyboard_buttons_widget.hide()
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Draw Fixed Needle
         self.drawNeedle(painter, self.fixed_needle_position, self._needle_color)
 
-        # Draw Loop Markers
         for start, end in self.loop_markers:
             self.drawNeedle(painter, start, self._marker_color)
             self.drawNeedle(painter, end, self._marker_color)
 
-        # Draw Slip Function Needle
         self.drawNeedle(painter, self.slip_function_needle_position, Qt.blue)
 
     def drawNeedle(self, painter, position, color):
@@ -65,19 +71,31 @@ class ExtendedWaveformFrame(QFrame):
         y2 = rect.y() + rect.height()
 
         painter.setPen(QColor(color))
-        painter.setBrush(QColor(color))  # Fill the needle with the specified color
+        painter.setBrush(QColor(color))
         painter.drawLine(x, y1, x, y2)
 
     def reset(self):
         self.update()
 
     def zoomIn(self):
-        # Implement zoom in logic
         print("Zoom In")
+        self.showKeyboard()
 
     def zoomOut(self):
-        # Implement zoom out logic
         print("Zoom Out")
+        self.hideKeyboard()
+
+    def showKeyboard(self):
+        self.keyboard_line_edit.show()
+        self.keyboard_buttons_widget.show()
+
+    def hideKeyboard(self):
+        self.keyboard_line_edit.hide()
+        self.keyboard_buttons_widget.hide()
+
+    def keyboardButtonClicked(self, char):
+        print(f"Keyboard Button Clicked: {char}")
+        self.hideKeyboard()
 
     def setNeedleColor(self, color):
         self._needle_color = color
@@ -99,7 +117,6 @@ class MyNexusApp(QWidget):
 
         self.initUI()
 
-        # Create and start the MIDI thread
         self.midi_thread = MidiThread(self)
         self.midi_thread.midi_message_received.connect(self.handle_midi_input)
         self.midi_thread.start()
@@ -128,11 +145,11 @@ class MyNexusApp(QWidget):
 
         self.loop_button_touch = QPushButton('Loop', self)
         self.loop_button_touch.clicked.connect(self.showLoopMenu)
-        self.loop_button_touch.setGeometry(10, 10, 100, 40)  # Adjust the position and size as needed
+        self.loop_button_touch.setGeometry(10, 10, 100, 40)
 
         self.beat_jump_button_touch = QPushButton('Beat Jump', self)
         self.beat_jump_button_touch.clicked.connect(self.showBeatJumpMenu)
-        self.beat_jump_button_touch.setGeometry(120, 10, 100, 40)  # Adjust the position and size as needed
+        self.beat_jump_button_touch.setGeometry(120, 10, 100, 40)
 
         self.loop_menu = QMenu(self)
         self.beat_jump_menu = QMenu(self)
@@ -140,12 +157,11 @@ class MyNexusApp(QWidget):
         self.populateBeatJumpMenu()
 
         self.loop_label = QLabel('Loop Division: -', self)
-        self.loop_label.setGeometry(10, 70, 200, 30)  # Adjust the position and size as needed
+        self.loop_label.setGeometry(10, 70, 200, 30)
 
         self.beat_jump_label = QLabel('Beat Jump: -', self)
-        self.beat_jump_label.setGeometry(10, 110, 200, 30)  # Adjust the position and size as needed
+        self.beat_jump_label.setGeometry(10, 110, 200, 30)
 
-        # Add Zoom Buttons
         self.zoom_in_button = QPushButton('+', self)
         self.zoom_in_button.clicked.connect(self.middle_waveform_frame.zoomIn)
 
@@ -168,7 +184,7 @@ class MyNexusApp(QWidget):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.updateBarCounter)
-        self.timer.start(500)  # Update every 500 milliseconds
+        self.timer.start(500)
 
         self.createMenus()
 
@@ -177,41 +193,33 @@ class MyNexusApp(QWidget):
         self.show()
 
     def handle_midi_input(self, message):
-        # Handle MIDI input here
         print(f"MIDI Message Received: {message}")
 
     def createMenus(self):
         menubar = self.menuBar()
 
-        # File Menu
         fileMenu = menubar.addMenu('File')
 
         exitAction = QAction('Exit', self)
         exitAction.triggered.connect(self.close)
         fileMenu.addAction(exitAction)
 
-        # Extended Configurations Sub-Menu
         extendedMenu = menubar.addMenu('Extended Configurations')
 
-        # Music Source Sub-Menus
         musicSourcesMenu = menubar.addMenu('Music Sources')
 
         cdAction = QAction('CD', self)
         sdAction = QAction('SD', self)
-        usbAction = QAction('USB', self)
         linkAction = QAction('LINK', self)
 
         cdAction.triggered.connect(self.handleMusicSourceSelected)
         sdAction.triggered.connect(self.handleMusicSourceSelected)
-        usbAction.triggered.connect(self.handleMusicSourceSelected)
         linkAction.triggered.connect(self.handleMusicSourceSelected)
 
         musicSourcesMenu.addAction(cdAction)
         musicSourcesMenu.addAction(sdAction)
-        musicSourcesMenu.addAction(usbAction)
         musicSourcesMenu.addAction(linkAction)
 
-        # Add Color Customization Option
         colorAction = QAction('Customize Colors', self)
         colorAction.triggered.connect(self.customizeColors)
         extendedMenu.addAction(colorAction)
@@ -219,6 +227,39 @@ class MyNexusApp(QWidget):
     def handleMusicSourceSelected(self):
         source = self.sender().text()
         self.top_bar.setText(f"Music Source Selected: {source}")
+
+        if source.lower() == 'browser':
+            self.middle_waveform_frame.showKeyboard()
+        else:
+            self.middle_waveform_frame.hideKeyboard()
+
+        if source.lower() == 'cd':
+            self.loadCDTracks()
+        elif source.lower() == 'sd':
+            self.loadSDTracks()
+        elif source.lower() == 'link':
+            self.loadLINKTracks()
+
+    def loadCDTracks(self):
+        self.music_list_widget.clear()
+        cd_tracks = ['Track 1', 'Track 2', 'Track 3', 'Track 4']
+        for track in cd_tracks:
+            item = QListWidgetItem(track)
+            self.music_list_widget.addItem(item)
+
+    def loadSDTracks(self):
+        self.music_list_widget.clear()
+        sd_tracks = ['SD Track 1', 'SD Track 2', 'SD Track 3', 'SD Track 4']
+        for track in sd_tracks:
+            item = QListWidgetItem(track)
+            self.music_list_widget.addItem(item)
+
+    def loadLINKTracks(self):
+        self.music_list_widget.clear()
+        link_tracks = ['LINK Track 1', 'LINK Track 2', 'LINK Track 3', 'LINK Track 4']
+        for track in link_tracks:
+            item = QListWidgetItem(track)
+            self.music_list_widget.addItem(item)
 
     def handleMouseMove(self, event):
         self.resetTimer()
@@ -241,24 +282,19 @@ class MyNexusApp(QWidget):
         self.artwork_label.setPixmap(pixmap.scaledToHeight(100))
 
     def populateMusicList(self):
-        # Add some dummy items for demonstration
         for i in range(10):
             item = QListWidgetItem(f"Track {i}")
             self.music_list_widget.addItem(item)
 
     def longPressEvent(self):
-        # Implement your extended functions here
         print("Long press event triggered!")
 
     def fastPressEvent(self):
-        # Implement loading the track into the player here
         selected_item = self.music_list_widget.currentItem()
         if selected_item:
             print(f"Loading track: {selected_item.text()}")
 
     def updateBarCounter(self):
-        # Update the bar counter based on the beats of the music
-        # You should replace this logic with the actual beats detection or synchronization logic
         self.bar_counter += 1
         self.bar_counter_label.setText(str(self.bar_counter))
 
@@ -274,8 +310,6 @@ class MyNexusApp(QWidget):
 
     def populateLoopMenu(self):
         loop_divisions = ['16 bars', '8 bars', '4 bars', '2 bars', '1 bar', '1/2 bar', '1/4 bar', '1/8 bar']
-
-        # Loop Sub-Menu
         loop_submenu = self.loop_menu.addMenu('Loop Subdivisions')
         for division in loop_divisions:
             action = loop_submenu.addAction(division)
@@ -283,8 +317,6 @@ class MyNexusApp(QWidget):
 
     def populateBeatJumpMenu(self):
         beat_jump_values = ['16 bars', '8 bars', '4 bars', '2 bars', '1 bar', '1/2 bar', '1/4 bar', '1/8 bar']
-
-        # Beat Jump Sub-Menu
         beat_jump_submenu = self.beat_jump_menu.addMenu('Beat Jump')
         for value in beat_jump_values:
             action = beat_jump_submenu.addAction(value)
@@ -299,15 +331,12 @@ class MyNexusApp(QWidget):
         self.beat_jump_label.setText(f'Beat Jump: {value}')
 
     def customizeColors(self):
-        # Create a dialog to customize colors
         dialog = QColorDialog(self)
         dialog.setWindowTitle('Customize Colors')
 
-        # Get the colors for needles and markers
         needle_color = dialog.getColor(self.middle_waveform_frame.needleColor(), self, 'Choose Needle Color')
         marker_color = dialog.getColor(self.middle_waveform_frame.markerColor(), self, 'Choose Marker Color')
 
-        # Update the colors
         self.middle_waveform_frame.setNeedleColor(needle_color)
         self.middle_waveform_frame.setMarkerColor(marker_color)
 
