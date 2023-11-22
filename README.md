@@ -2,7 +2,11 @@
 This is a on-going project to create a skin for DJ software "MIXXX" to make a CDJ1000mk3 MIDI moded work as a Nexus CDJ2000 model
 
 Pioneer inspired theme for smaller screen resolutions. It has been designed to 'extend' a MIDI controller.
-Designed for use with the DDJ-400 with Raspberry Pi standalone mod ([link](https://www.youtube.com/watch?v=kyrJW7Vaf68)).
+
+This project is being developed using ChatGPT as im not a poeficient coder/programmer so bear in mind that the code may seam weird for a professional programmer.
+
+
+Inspired by: ([link](https://www.youtube.com/watch?v=kyrJW7Vaf68)).
 
 ![skin_preview](https://github.com/timewasternl/Pioneered/blob/master/skin_preview.png?raw=true)
 
@@ -11,8 +15,9 @@ Designed for use with the DDJ-400 with Raspberry Pi standalone mod ([link](https
 * Fully scalable to use a 6.1" screen
 * Inspired by the Pioneer CDJ2000NSX interface
 * Small waveform overviews at the bottom and big extended RGB overview waveform
-* Keylock/Quantize/Slip buttons
+* Keylock/Quantize/Slip buttons 
 * Beatjump/Loop size on screen button (popup as factory Pioneer product)
+* MIDI handling
 * Barely any resources = Rpi4b or Rpi5!
 
 ## Install
