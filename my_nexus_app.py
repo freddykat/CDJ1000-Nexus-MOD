@@ -311,24 +311,36 @@ class MyNexusApp(QWidget):
     def populateLoopMenu(self):
         loop_divisions = ['16 bars', '8 bars', '4 bars', '2 bars', '1 bar', '1/2 bar', '1/4 bar', '1/8 bar']
         loop_submenu = self.loop_menu.addMenu('Loop Subdivisions')
-        for division in loop_divisions:
-            action = loop_submenu.addAction(division)
-            action.triggered.connect(self.handleLoopDivisionSelected)
+
+        for direction in ['Forward', 'Backward']:
+            direction_submenu = loop_submenu.addMenu(f'{direction} Direction')
+
+            for division in loop_divisions:
+                action = direction_submenu.addAction(division)
+                action.triggered.connect(self.handleLoopDivisionSelected)
 
     def populateBeatJumpMenu(self):
         beat_jump_values = ['16 bars', '8 bars', '4 bars', '2 bars', '1 bar', '1/2 bar', '1/4 bar', '1/8 bar']
         beat_jump_submenu = self.beat_jump_menu.addMenu('Beat Jump')
-        for value in beat_jump_values:
-            action = beat_jump_submenu.addAction(value)
-            action.triggered.connect(self.handleBeatJumpSelected)
+
+        for direction in ['Forward', 'Backward']:
+            direction_submenu = beat_jump_submenu.addMenu(f'{direction} Direction')
+
+            for value in beat_jump_values:
+                action = direction_submenu.addAction(value)
+                action.triggered.connect(self.handleBeatJumpSelected)
 
     def handleLoopDivisionSelected(self):
+        direction_submenu = self.sender().parent()
+        direction = 'Forward' if 'Forward' in direction_submenu.title() else 'Backward'
         division = self.sender().text()
-        self.loop_label.setText(f'Loop Division: {division}')
+        self.loop_label.setText(f'Loop Division: {direction} {division}')
 
     def handleBeatJumpSelected(self):
+        direction_submenu = self.sender().parent()
+        direction = 'Forward' if 'Forward' in direction_submenu.title() else 'Backward'
         value = self.sender().text()
-        self.beat_jump_label.setText(f'Beat Jump: {value}')
+        self.beat_jump_label.setText(f'Beat Jump: {direction} {value}')
 
     def customizeColors(self):
         dialog = QColorDialog(self)
